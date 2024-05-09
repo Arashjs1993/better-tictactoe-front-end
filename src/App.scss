@@ -28,6 +28,31 @@
   color: #61dafb;
 }
 
+.nav-container {
+  display: flex;
+  justify-content: center;
+  ul {
+    display: flex;
+    li {
+      width: 150px;
+      display: flex;
+      justify-content: center;
+      a {
+        padding: 5px;
+        text-align: center;
+        width: 100%;
+        &:hover {
+          background-color:#282c34;
+          color: #fff;
+        }
+        color: black;
+        text-decoration: none;
+      }
+      list-style-type: none;
+    }
+  }
+}
+
 /* USER FORM STYLING */
 .user-form-container {
   color: #fff;
@@ -67,6 +92,17 @@
       width: 130px;
       height: 30px;
     }
+  }
+  .errors-container {
+    color: red;
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+  .success-container {
+    color: green;
   }
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BaseResponse } from '../interfaces';
 
 export default function UserForm() {
@@ -6,7 +6,8 @@ export default function UserForm() {
     const [age, setAge] = useState<number>();
     const [birthDate, setBirthDate] = useState<string>('');
     const [married, setMarried] = useState<boolean>(false);
-    const [data , setData] = useState<BaseResponse>();
+    const [errors, setErrors] = useState<string[]>([])
+    const [state, setState] = useState<'INITIAL' | 'SUCCESS'>('INITIAL');
     const sendRequest = async(e: any) => {
         e.preventDefault();
         fetch('http://localhost:3001/user-form/validate', {
@@ -21,17 +22,29 @@ export default function UserForm() {
           married: married
         })
       })
-      .then((rawResponse) => {
-        if([200, 201].includes(rawResponse.status)) {
+      .then((rawResponse: any) => {
+        if([200, 201].includes(rawResponse.status)) { 
+          setState('SUCCESS');
+          setErrors([]);
           return rawResponse.json();
         } else {
-          throw new Error();
-        }        
-      })
-      .then((response: BaseResponse) => {
-        setData(response);
+            rawResponse.json().then((res: BaseResponse) => {
+                if(res.errors && res.errors.length > 0) {
+                    setErrors(extractErrors(res.errors));
+                }
+            })
+        }     
       })
     };
+    const extractErrors = (e: any) => {
+        const errors: string[] = [];
+        e.map((e: any) => {
+            return Object.keys(e.constraints).map((key) => {
+                errors.push(e.constraints[key]);
+            })
+        })
+        return errors;
+    }
     return (
         <div className='user-form-container'>
             <h1>Modulo utente</h1>
@@ -69,6 +82,20 @@ export default function UserForm() {
                 </div>
                 <div className="user-form-buttons">
                     <button type='submit'>Invia</button>
+                </div>
+                <div className='errors-container'>
+                    {errors.length > 0 && <ul>
+                        {errors.map((e, index) => {
+                            return (
+                                <li key={index}>{e}</li>
+                            );
+                        })}
+                    </ul>}
+                </div>
+                <div className='success-container'>
+                    {errors.length === 0 && state === 'SUCCESS' && <ul>
+                         <li>Form is valid.</li>
+                    </ul>}
                 </div>
             </form>
         </div>

@@ -20,7 +20,7 @@ export default function App() {
 function Layout() {
   return (
     <div>
-      <nav>
+      <nav className="nav-container">
         <ul>
           <li>
             <Link to="/">Home</Link>
